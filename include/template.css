@@ -1,0 +1,127 @@
+body {
+    font: 14px Arial;
+}
+
+table {
+    font: 12px Arial;
+    border: 1px black solid;
+    border-collapse: collapse;
+}
+
+table th {
+    background-color: #CECECE;
+    border-bottom: 1px black solid;
+    border-right: 1px black solid;
+    padding: 2px;
+}
+
+table td {
+    border-bottom: 1px gray solid;
+    border-right: 1px gray solid;
+    padding: 2px;
+}
+
+table.pravila {
+    font-weight: bold;
+    border-collapse: collapse;
+}
+
+table.pravila td {
+    padding: 3px;
+}
+
+/* background color za lakes */
+.lakes {
+    background-color: #d8fcf2;
+}
+
+table.procedure, table.procedure td { font-size: 14px; border: 0px black solid; }
+
+.selected { background-color: #C9F7C9;}		/* zelena */
+.highlighted { background-color: #CFCFCF; }	/* siva*/
+.mismatch { background-color: #FFD7D7; }	/* rdeca */
+.alternate { background-color: #EFEFEF; }	/* blago siva */
+
+.green { color: green; }
+.blue { color: blue; }
+.red { color: red; }
+.orange { color: orange; }
+
+.big { font-size: 20px; }
+.bigger { font-size: 17px; }
+.bold { font-weight: bold; }
+.italic { font-style: italic; }
+.underline { text-decoration: underline; }
+
+a { color: #975B0E; }
+
+input { border: 1px black solid; }
+
+.mini_button { font-size: 10px; }
+
+.highlight_yellow { background: #FCFC9C; }
+.highlight_red { background: #FC9999; }
+.highlight_green { background: #7EFC7E; }
+.highlight_blue { background-color: #CFE6FC; }  /* sv. modra */
+
+/*.highlight_red a { color: black; }
+.highlight_green a { color: black; }*/
+
+/* za tabelo v index.php - browsanje datotek (izvorni podatki, risk) */
+table.file_browser	{
+    border: 0;
+    font: 14px Tahoma, Verdana;
+    line-height: 20px;
+}
+
+table.file_browser td {
+    padding-right: 30px;
+    border: 0;
+}
+
+#filter_country, #filter_table {
+    background-color: #7EFC7E;
+}
+
+/* CSI019: interpolacija, extrapolacija */
+.extrapolate_low {
+
+    background-color: #FFB7B7;
+}
+
+.extrapolate_high {
+    background-color: #FFCEF3;
+}
+
+.interpolate {
+    background-color: #FCFFB2;
+}
+
+/* CSI019: SEARCH for outliers */
+#iframe_podatki {
+    border: 0;
+    width: 900px;
+}
+
+.edit_fields_textarea {
+	text-align: right;
+}
+
+.editable_fields {
+	margin-left: 3px;
+}
+
+
+/*
+table {
+    width: 700px;
+    font-size: 12px;
+    border: 1px black solid;
+    border-collapse: collapse;
+}
+th, td {
+    border-bottom: 1px black solid;
+    border-right: 1px black dotted;
+    padding: 3px;
+}
+*/<
