@@ -12,6 +12,9 @@ class db_common
     protected $mysqli;
 
     public $tableName;
+    public $columnNameTL;
+    public $columnNameId;
+    public $FloodEventCode;
 
     /**
      * @brief   konstruktor se poveže na mysql bazo
@@ -29,6 +32,9 @@ class db_common
         $this->mysqli->query("SET NAMES 'utf8'");
 
         $this->tableName = $GLOBALS['table'];
+        $this->columnNameTL = $GLOBALS['columnNameTL'];
+        $this->columnNameId = $GLOBALS['columnNameId'];
+        $this->FloodEventCode = $GLOBALS['FloodEventCode'];
 
         //echo "<pre>". $GLOBALS['database'] ."</pre>";
     }
@@ -90,7 +96,7 @@ class db_common
      *
      * @return bool|\mysqli_result
      */
-    protected function executeMySQLQuery($sql) {
+    public function executeMySQLQuery($sql) {
 
         global $sql_debug_mode;
 
