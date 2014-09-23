@@ -81,14 +81,34 @@ class flood extends db_common
      * @TODO dodat še type = 'create', da kreira tabelo
      */
     public function getMultipleEventsForCountry($cc, $type = 'view') {
-        $sql = "
-            SELECT MIN(StartDate), " . $this->columnNameTL .", COUNT(*), GROUP_CONCAT(DISTINCT " . $this->FloodEventCode .")
+
+        $sql = "";
+
+        if($type === 'create') {
+            $tableName = "tmp_".$cc."_floodPeriods";
+            $sql_drop = "DROP TABLE IF EXISTS " . $tableName;
+            $this->executeMySQLQuery($sql_drop);
+
+            $sql .= "CREATE TABLE IF NOT EXISTS " . $tableName;
+        }
+
+        $sql .= "
+            SELECT
+                MIN(StartDate) AS timeLineStart,
+                " . $this->columnNameTL .",
+                COUNT(*) AS NoOfEvents,
+                GROUP_CONCAT(DISTINCT " . $this->FloodEventCode .") AS eventCodes
             FROM " . $this->tableName ."
             WHERE cc = '".$cc."'
             GROUP BY " . $this->columnNameTL ."
         ";
 
-        return $this->createArrayFromSQL($sql);
+        if($type === 'create') {
+            $this->executeMySQLQuery($sql);
+            return $tableName;
+        } else {
+            return $this->createArrayFromSQL($sql);
+        }
 
     }
 

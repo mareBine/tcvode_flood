@@ -30,24 +30,28 @@ echo "<div id='version' style='position: absolute; top: 10px; right: 10px;'>v02 
 flush();
 ob_flush();
 
-if(!isset($_GET['cc'])) {
+if (!isset($_GET['cc'])) {
     $_GET['cc'] = 'SI';
 }
 
-echo "V tabelo <strong>" . $flood->tableName ."</strong> doda na začetku polja:<br>";
-echo "* " . $flood->columnNameTL ." - konec časovnega obdobja za prekrit event (dobi rekurzija)<br>";
-echo "* " . $flood->columnNameId ." - unikaten id eventa<br>";
+if (!isset($_GET['type'])) {
+    $_GET['type'] = 'view';
+}
+
+echo "V tabelo <strong>" . $flood->tableName . "</strong> doda na začetku polja:<br>";
+echo "* " . $flood->columnNameTL . " - konec časovnega obdobja za prekrit event (dobi rekurzija)<br>";
+echo "* " . $flood->columnNameId . " - unikaten id eventa<br>";
 echo "<br>";
 
 // alter orig. tabele; doda na koncu atribut timeLineEnd
-if(!!!$flood->checkIfColumnExists($columnNameTL)) {
+if (!!!$flood->checkIfColumnExists($columnNameTL)) {
     $flood->createTableColumn($columnNameTL, 'DATE NULL FIRST');
 }
 
 $flood->setTimeLineEndColumn($columnNameTL);
 
 // doda še id
-if(!!!$flood->checkIfColumnExists($columnNameId)) {
+if (!!!$flood->checkIfColumnExists($columnNameId)) {
     $flood->createTableColumn($columnNameId, 'INT(10) NOT NULL AUTO_INCREMENT FIRST, DROP PRIMARY KEY, ADD PRIMARY KEY(' . $columnNameId . ')');
 }
 
@@ -55,14 +59,17 @@ if(!!!$flood->checkIfColumnExists($columnNameId)) {
 $result = $flood->getAllFloodEventsForCountry($_GET['cc']);
 $stevec = 1;
 
-echo "<br>Gre čez vse evente v izvorni tabeli <strong>" . $flood->tableName ."</strong> in rekurzivno išče prekrite evente:<br><br>";
+echo "<br>-> Parameter type=create kreira tabelo v bazi namesto da jo izpiše: ";
+echo "<a href='" . $_SERVER['PHP_SELF'] . "?cc=" . $_GET['cc'] . "&type=create'>" . $_SERVER['PHP_SELF'] . "?cc=" . $_GET['cc'] . "&type=create</a><br>";
+
+echo "<br>Gre čez vse evente v izvorni tabeli <strong>" . $flood->tableName . "</strong> in rekurzivno išče prekrite evente:<br><br>";
 
 while ($myrow = $result->fetch_array()) {
 
     $updateSql = "";
 
     // izpiše vsak event
-    echo ($stevec++)." ".$myrow['FloodEventCode'] . ": " . $myrow['StartDate'] . " -  " . $myrow['EndDate'] . "\t\t";
+    echo ($stevec++) . " " . $myrow['FloodEventCode'] . ": " . $myrow['StartDate'] . " -  " . $myrow['EndDate'] . "\t\t";
     flush();
     ob_flush();
 
@@ -70,7 +77,7 @@ while ($myrow = $result->fetch_array()) {
     $flood->recursiveSearchOverlappedEvents($_GET['cc'], $myrow['StartDate'], $myrow['EndDate'], array($myrow['FloodEventCode']), $updateSql);
 
     // sestavi do konca stavek za update in ga izvede; updata polje timeLineEnd
-    if($updateSql != "")    {
+    if ($updateSql != "") {
         $updateSql .= " WHERE id = " . $myrow['id'];
         $flood->executeMySQLQuery($updateSql);
     }
@@ -80,10 +87,17 @@ while ($myrow = $result->fetch_array()) {
 
 $timer_end = $flood->microtime_float();
 $execution_time = round($timer_end - $timer_start, 2);
-echo "<br><br>execution time: ".$execution_time." secs<br><br>";
+echo "<br><br>execution time: " . $execution_time . " secs<br><br>";
 
-echo "<br>Končna tabela z rezultati: ";
-$html->drawTableFromArray($flood->getMultipleEventsForCountry($_GET['cc']), 'table1', '');
+// ali kreira tabelo ali izpiše na ekran
+if ($_GET['type'] === 'create') {
+    echo "<br><strong>Kreiranje</strong> končne tabele z rezultati: " . $flood->getMultipleEventsForCountry($_GET['cc'], 'create');
+
+} else {
+    echo "<br>Končna tabela z rezultati: ";
+    $html->drawTableFromArray($flood->getMultipleEventsForCountry($_GET['cc']), 'table1', '');
+
+}
 
 
 
