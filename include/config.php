@@ -10,6 +10,8 @@ $port = 3307;
 
 // nastavitve za ime tabele in atribute, pustiš kot je
 $table = "floodevent_indicator_past1980_timeperiods";
+//$table = "floodevent_pl";
+
 $FloodEventCode = 'FloodEventCode';
 // ta 2 atributa potem kreira
 $columnNameTL = 'timeLineEnd';

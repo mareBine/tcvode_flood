@@ -44,16 +44,16 @@ class flood extends db_common
             and FloodEventCode NOT IN ('" . implode("','", $eventCode) . "')
         ";
 
-        //if($eventCode[0] == 'SI3_198907B')            echo "<pre>".$sql."</pre>";
+        //if($eventCode[0] == 'PL_2000_P_2010_0098_0713')            echo "<pre>".$sql."</pre>";
         //var_dump($eventCode);
 
         $result = $this->executeMySQLQuery($sql);
         $myrow = $result->fetch_array();
 
-        //echo $result->num_rows;
+        //echo "<br>numrows: " . $result->num_rows;
 
         if ($result->num_rows > 0) {
-            //echo " -----------------> " . $myrow['id']  . " ";
+            //echo " ---------> " . $myrow['id']  . " ";
             $eventCode[] = $myrow['FloodEventCode'];
             $eventCode = array_unique($eventCode);
             $this->recursiveSearchOverlappedEvents($cc, $myrow['StartDate'], ($endDate > $myrow['EndDate'] ? $endDate : $myrow['EndDate']), $eventCode, $updateSql);
