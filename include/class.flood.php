@@ -59,15 +59,57 @@ class flood extends db_common
             $this->recursiveSearchOverlappedEvents($cc, $myrow['StartDate'], ($endDate > $myrow['EndDate'] ? $endDate : $myrow['EndDate']), $eventCode, $updateSql);
         } else {
             if (sizeof($eventCode) > 1) {
-                echo " -----------------> " . $endDate  . " ";
+                echo " -----------------> " . $endDate . " ";
                 echo "(" . sizeof($eventCode) . ")";
 
-                $updateSql = "UPDATE " . $this->tableName ." SET " . $this->columnNameTL ." = '" . $endDate ."' ";
+                $updateSql = "UPDATE " . $this->tableName . " SET " . $this->columnNameTL . " = '" . $endDate . "' ";
             }
 
         }
 
         return $result;
+
+    }
+
+    /**
+     * iterativna procedura, ki poišče vse overlapped evente
+     *
+     * @param $cc
+     * @param $startDate
+     * @param $endDate
+     * @param $eventCode
+     */
+    public function iterativeSearchOverlappedEvents($cc, $startDate, $endDate, $eventCode)
+    {
+
+    }
+
+    public function createTableIterative($cc)
+    {
+
+        // type = 'create', da kreira tabelo
+        $tableName = "tmp_iterative_" . $cc . "_floodPeriods";
+        $sql_drop = "DROP TABLE IF EXISTS " . $tableName;
+        $this->executeMySQLQuery($sql_drop);
+
+        $sql = "
+            CREATE TABLE IF NOT EXISTS " . $tableName . " (
+                event_id INT(10),
+                timeLineStart DATE,
+                timeLineEnd DATE,
+                noOfEvents INT(10)
+            );
+        ";
+        $this->executeMySQLQuery($sql);
+
+        return $tableName;
+
+    }
+
+    public function iterativeGetAllEvents($tableName)
+    {
+        $sql = "SELECT * FROM " . $tableName;
+        return $this->createArrayFromSQL($sql);
 
     }
 
@@ -78,14 +120,15 @@ class flood extends db_common
      * @param string $type
      * @return bool
      *
-     * @TODO dodat še type = 'create', da kreira tabelo
      */
-    public function getMultipleEventsForCountry($cc, $type = 'view') {
+    public function recursiveGetMultipleEventsForCountry($cc, $type = 'view')
+    {
 
         $sql = "";
 
-        if($type === 'create') {
-            $tableName = "tmp_".$cc."_floodPeriods";
+        // type = 'create', da kreira tabelo
+        if ($type === 'create') {
+            $tableName = "tmp_recursive_" . $cc . "_floodPeriods";
             $sql_drop = "DROP TABLE IF EXISTS " . $tableName;
             $this->executeMySQLQuery($sql_drop);
 
@@ -95,15 +138,15 @@ class flood extends db_common
         $sql .= "
             SELECT
                 MIN(StartDate) AS timeLineStart,
-                " . $this->columnNameTL .",
+                " . $this->columnNameTL . ",
                 COUNT(*) AS NoOfEvents,
-                GROUP_CONCAT(DISTINCT " . $this->FloodEventCode .") AS eventCodes
-            FROM " . $this->tableName ."
-            WHERE cc = '".$cc."'
-            GROUP BY " . $this->columnNameTL ."
+                GROUP_CONCAT(DISTINCT " . $this->FloodEventCode . ") AS eventCodes
+            FROM " . $this->tableName . "
+            WHERE cc = '" . $cc . "'
+            GROUP BY " . $this->columnNameTL . "
         ";
 
-        if($type === 'create') {
+        if ($type === 'create') {
             $this->executeMySQLQuery($sql);
             return $tableName;
         } else {
@@ -112,23 +155,24 @@ class flood extends db_common
 
     }
 
-        /**
+    /**
      * preveri če v tabeli obstaja iskani column
      *
      * @param $columnName
      * @return bool
      */
-    public function checkIfColumnExists($columnName) {
+    public function checkIfColumnExists($columnName)
+    {
         $sql = "
             SELECT *
             FROM information_schema.columns
             WHERE table_schema = database()
-            and COLUMN_NAME = '".$columnName."'
-            AND table_name = '".$this->tableName."'
+            and COLUMN_NAME = '" . $columnName . "'
+            AND table_name = '" . $this->tableName . "'
         ";
 
         $result = $this->executeMySQLQuery($sql);
-        if($result->num_rows > 0)   return true;
+        if ($result->num_rows > 0) return true;
         else                        return false;
     }
 
@@ -140,13 +184,14 @@ class flood extends db_common
      * @param $columnDesc
      * @return bool|mysqli_result
      */
-    public function createTableColumn($columnName, $columnDesc) {
+    public function createTableColumn($columnName, $columnDesc)
+    {
 
         echo "- creating " . $columnName . " column ...<br>";
 
         $sql = "
-            ALTER TABLE ".$this->tableName."
-            ADD COLUMN ".$columnName." ".$columnDesc.";
+            ALTER TABLE " . $this->tableName . "
+            ADD COLUMN " . $columnName . " " . $columnDesc . ";
         ";
 
         return $this->executeMySQLQuery($sql);
@@ -159,21 +204,23 @@ class flood extends db_common
      * @param $columnName
      * @return bool|mysqli_result
      */
-    public function setTimeLineEndColumn($columnName) {
+    public function setTimeLineEndColumn($columnName)
+    {
 
         echo "- updating " . $columnName . " column ...<br>";
 
         $sql = "
-            UPDATE ".$this->tableName."
-            SET ".$columnName." = EndDate
+            UPDATE " . $this->tableName . "
+            SET " . $columnName . " = EndDate
         ";
 
         return $this->executeMySQLQuery($sql);
     }
 
-    public function updateTimeLineEndColumn($cc, $startDate, $endDate) {
+    public function updateTimeLineEndColumn($cc, $startDate, $endDate)
+    {
 
-        echo "- updating " . $cc . " [" . $startDate ."] [" . $endDate . "] column ...<br>";
+        echo "- updating " . $cc . " [" . $startDate . "] [" . $endDate . "] column ...<br>";
 
 //        $sql = "
 //            UPDATE ".$this->tableName."

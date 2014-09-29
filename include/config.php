@@ -17,4 +17,5 @@ $FloodEventCode = 'FloodEventCode';
 $columnNameTL = 'timeLineEnd';
 $columnNameId = 'id';
 
+$online = 0;
 ?>
