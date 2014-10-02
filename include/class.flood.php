@@ -88,7 +88,7 @@ class flood extends db_common
     {
 
         // type = 'create', da kreira tabelo
-        $tableName = "tmp_iterative_" . $cc . "_floodPeriods";
+        $tableName = "tmp_fp_periods_" . $cc;
         $sql_drop = "DROP TABLE IF EXISTS " . $tableName;
         $this->executeMySQLQuery($sql_drop);
 
