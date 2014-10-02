@@ -95,8 +95,8 @@ class flood extends db_common
         $sql = "
             CREATE TABLE IF NOT EXISTS " . $tableName . " (
                 event_id INT(10),
-                timeLineStart DATE,
-                timeLineEnd DATE,
+                per_start DATE,
+                per_end DATE,
                 noOfEvents INT(10)
             );
         ";
